@@ -2,8 +2,10 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../../models/User");
 
-// register
 const registerUser = async (req, res) => {
+  // Log the incoming request body
+  console.log("Register request body:", req.body);
+
   const { userName, email, password } = req.body;
 
   try {
@@ -13,32 +15,21 @@ const registerUser = async (req, res) => {
       email,
       password: hashPassword,
     });
-    await newUser.save(); // save the password
+    await newUser.save();
     res.status(200).json({
       success: true,
-      message: "Registeration is sucessful",
+      message: "Registration is successful",
     });
   } catch (e) {
-    console.log(e);
+    // Log the error details
+    console.error("Registration error:", e);
     res.status(500).json({
       success: false,
-      message: "Some error occured",
+      message: e.message || "Some error occurred",
+      error: e, // (optional) send error details to frontend for debugging
     });
   }
 };
-
-//login
-const login = async (req, res) => {
-  try {
-  } catch (e) {
-    console.log(e);
-    res.status(500).json({
-      success: false,
-      message: "Some error occured",
-    });
-  }
-};
-
 //logout
 
 // auth middleware
