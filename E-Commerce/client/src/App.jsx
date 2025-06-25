@@ -16,12 +16,11 @@ import AdminProducts from "./pages/admin-view/products";
 import AdminFeatures from "./pages/admin-view/features";
 import AdminOrders from "./pages/admin-view/orders";
 import CheckAuth from "./components/common/check-auth";
+import { useSelector } from "react-redux";
+
 function App() {
-  const isAuthenticated = false;
-  const user = {
-    name: "Preeti",
-    role: "null",
-  };
+  const { user, isAuthenticated } = useSelector((state) => state.auth);
+
   return (
     <div className="flex flex-col overflow-hidden bg-white">
       <Routes>

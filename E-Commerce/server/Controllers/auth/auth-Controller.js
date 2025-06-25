@@ -3,12 +3,18 @@ const jwt = require("jsonwebtoken");
 const User = require("../../models/User");
 
 const registerUser = async (req, res) => {
-  // Log the incoming request body
+  // Register
   console.log("Register request body:", req.body);
 
   const { userName, email, password } = req.body;
 
   try {
+    const checkUser = await User.findOne({ email });
+    if (checkUser)
+      return res.json({
+        success: false,
+        message: "User already exist with this email, Try with other email",
+      });
     const hashPassword = await bcrypt.hash(password, 12);
     const newUser = new User({
       userName,
@@ -30,8 +36,57 @@ const registerUser = async (req, res) => {
     });
   }
 };
-//logout
+//login
+const loginUser = async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const checkUser = await User.findOne({ email });
+    if (!checkUser)
+      return res.json({
+        success: false,
+        message: "User does not exists! Please register first",
+      });
+    const checkPasswordMatch = await bcrypt.compare(
+      password,
+      checkUser.password
+    );
+    if (!checkPasswordMatch)
+      return res.json({
+        success: false,
+        message: "Incorrect Password! Please Try Again",
+      });
+
+    const token = jwt.sign(
+      {
+        id: checkUser._id,
+        role: checkUser.role,
+        email: checkUser.email,
+        userName: checkUser.userName,
+      },
+      "CLIENT_SECRET_KEY",
+      { expiresIn: "60m" }
+    );
+
+    res.cookie("token", token, { httpOnly: true, secure: false }).json({
+      success: true,
+      message: "Logged in Successfully",
+      user: {
+        email: checkUser.email,
+        role: checkUser.role,
+        id: checkUser.role,
+        userName: checkUser.userName,
+      },
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({
+      success: false,
+      message: "Some error occured",
+    });
+  }
+};
 
 // auth middleware
 
-module.exports = { registerUser };
+module.exports = { registerUser, loginUser };
