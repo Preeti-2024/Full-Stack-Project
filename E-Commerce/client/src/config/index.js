@@ -37,3 +37,23 @@ export const loginFormControls = [
     type: "text",
   },
 ];
+export const adminSidebarMenuItems = [
+  {
+    id: "dashboard",
+    label: "Dashboard",
+    path: "/admin/dashboard",
+    icon: <LayoutDashboard />,
+  },
+  {
+    id: "products",
+    label: "Products",
+    path: "/admin/products",
+    icon: <ShoppingBasket />,
+  },
+  {
+    id: "orders",
+    label: "orders",
+    path: "/admin/orders",
+    icon: <BadgeCheck />,
+  },
+];

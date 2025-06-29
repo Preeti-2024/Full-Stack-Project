@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 import AuthLayout from "./components/auth/layout";
 import AdminLayout from "./components/admin-view/layout";
@@ -17,10 +17,22 @@ import AdminFeatures from "./pages/admin-view/features";
 import AdminOrders from "./pages/admin-view/orders";
 import CheckAuth from "./components/common/check-auth";
 import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { checkAuth } from "./store/auth-slice";
+import { Skeleton } from "@/components/ui/skeleton";
 
 function App() {
-  const { user, isAuthenticated } = useSelector((state) => state.auth);
+  const { user, isAuthenticated, isLoading } = useSelector(
+    (state) => state.auth
+  );
+  const dispatch = useDispatch();
 
+  useEffect(() => {
+    dispatch(checkAuth());
+  }, [dispatch]);
+
+  if (isLoading) return <Skeleton className="h-[600px] bg-black w-[800px]" />;
+  console.log(isLoading, user);
   return (
     <div className="flex flex-col overflow-hidden bg-white">
       <Routes>
